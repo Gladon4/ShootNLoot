@@ -1,0 +1,92 @@
+#include "entity.h"
+
+#include "stdlib.h"
+#include "string.h"
+#include "raymath.h"
+
+Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int uuid) {
+    Entity* entity = malloc(sizeof(Entity));
+
+    *entity = (Entity)
+    {
+        .position = position,
+        .mass = mass,
+        .size = size, 
+        .drag = drag,
+
+        .velocity = (Vector2){0, 0},
+        .acceleration = (Vector2) {0, 0},
+
+        .hitbox = (Hitbox)
+        {
+            .rect = (Rectangle)
+            {
+                .x = position.x - size.x / 2,
+                .y = position.y - size.y / 2,
+                .width = size.x,
+                .height = size.y
+            },
+            .tag = hitboxTag
+        },
+
+        .uuid = uuid,
+        .tags = entityTags,
+        .state = idle
+    };
+    
+    return entity;
+}
+
+void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime)
+{
+    entity->velocity = Vector2Add(entity->velocity, Vector2Scale(entity->acceleration, deltaTime * 60));
+    
+    float dragFactor = entity->drag * deltaTime * 60;
+    entity->velocity = Vector2Subtract(entity->velocity, Vector2Scale(entity->velocity, dragFactor));
+
+    entity->position = Vector2Add(entity->position, Vector2Scale(entity->velocity, deltaTime * 60));
+
+    entity->position = Vector2Clamp(entity->position, Vector2Zero(), Vector2Subtract(levelSize, entity->size));
+
+    UpdateEntityHitBox(entity);
+}
+
+void UpdateEntityHitBox(Entity* entity)
+{
+    entity->hitbox.rect = (Rectangle) {
+        .x = entity->position.x - entity->size.x/2,
+        .y = entity->position.y - entity->size.y/2,
+        .width = entity->size.x,
+        .height = entity->size.y
+    };
+}
+
+void DrawEntity(Entity entity)
+{
+    Color col = RED;
+    if(entity.state == pushing) {col = GREEN;}
+
+    DrawRectangle(entity.position.x - (entity.size.x / 2), entity.position.y - (entity.size.y / 2), entity.size.x, entity.size.y, col);
+}
+
+bool EntityHasTag(Entity* entity, char* tag)
+{
+    char* entityTags = malloc(sizeof(entity->tags));
+    strcpy(entityTags, entity->tags);
+
+    char* token = strtok(entity->tags, "_");
+
+    while (token != NULL)
+    {
+        if (!strcmp(token, tag))
+        {
+            strcpy(entity->tags, entityTags);
+            return true;
+        }
+        token = strtok(NULL, "_");
+    }
+
+    strcpy(entity->tags, entityTags);
+    return false;
+}
+

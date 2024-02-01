@@ -1,0 +1,8 @@
+LootNShoot
+*.o
+CMakeCache.txt
+*.cmake
+CMakeFiles
+Makefile
+.vscode
+
