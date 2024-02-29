@@ -12,7 +12,8 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
         return;
     }
 
-    if (EntityHasTag(entity2, "pushable"))
+
+    if (EntityHasTag(entity2, "pushable") && !EntityHasTag(entity1, "immovable"))
     {
         if (_PushEntity(entity1, entity2))
         {
@@ -21,7 +22,7 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
         }
     }
 
-    if (EntityHasTag(entity1, "pushable"))
+    if (EntityHasTag(entity1, "pushable") && !EntityHasTag(entity2, "immovable"))
     {
         if (_PushEntity(entity2, entity1))
         {
@@ -30,6 +31,7 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
         }
     }
 
+    
     Rectangle collisionRectangle = GetCollisionRec(entity1->hitbox.rect, entity2->hitbox.rect);
 
     if (collisionRectangle.width > collisionRectangle.height)
@@ -44,6 +46,17 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
             entity1->velocity.y = min(entity1->velocity.y, 0);
             entity2->velocity.y = max(entity2->velocity.y, 0);
 
+            if (EntityHasTag(entity2, "immovable"))
+            {
+                entity1->position.y -= collisionRectangle.height;
+                return;
+            }
+            if (EntityHasTag(entity1, "immovable"))
+            {
+                entity2->position.y += collisionRectangle.height;
+                return;
+            }
+
             entity1->position.y -= collisionRectangle.height/2;
             entity2->position.y += collisionRectangle.height/2;
         } 
@@ -55,8 +68,20 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
             entity1->velocity.y = max(entity1->velocity.y, 0);
             entity2->velocity.y = min(entity2->velocity.y, 0);
 
+            if (EntityHasTag(entity2, "immovable"))
+            {
+                entity1->position.y += collisionRectangle.height;
+                return;
+            }            
+            if (EntityHasTag(entity1, "immovable"))
+            {
+                entity2->position.y -= collisionRectangle.height;
+                return;
+            }
+
             entity1->position.y += collisionRectangle.height/2;
             entity2->position.y -= collisionRectangle.height/2;
+
         }
     }
     else
@@ -71,6 +96,17 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
             entity1->velocity.x = min(entity1->velocity.x, 0);
             entity2->velocity.x = max(entity2->velocity.x, 0);
             
+            if (EntityHasTag(entity2, "immovable"))
+            {
+                entity1->position.x -= collisionRectangle.width;
+                return;
+            }
+            if (EntityHasTag(entity1, "immovable"))
+            {
+                entity2->position.x += collisionRectangle.width;
+                return;
+            }
+
             entity1->position.x -= collisionRectangle.width/2;
             entity2->position.x += collisionRectangle.width/2;
         } 
@@ -82,6 +118,17 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
             entity1->velocity.x = max(entity1->velocity.x, 0);
             entity2->velocity.x = min(entity2->velocity.x, 0);
 
+            if (EntityHasTag(entity2, "immovable"))
+            {
+                entity1->position.x += collisionRectangle.width;
+                return;
+            }
+            if (EntityHasTag(entity1, "immovable"))
+            {
+                entity2->position.x -= collisionRectangle.width;
+                return;
+            }
+            
             entity1->position.x += collisionRectangle.width/2;
             entity2->position.x -= collisionRectangle.width/2;
         }

@@ -31,7 +31,7 @@ int main()
 
     Entity* player = CreatePlayer(&entityManager, (Vector2) {1000, 1000});
     EntityManagerCreateEntity(&entityManager, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {200, 200}, 0.1);
-    EntityManagerCreateEntity(&entityManager, (Vector2) {1200, 1200}, "test", "pushable_test", 0.1, (Vector2) {50, 150}, 0.1);
+    EntityManagerCreateEntity(&entityManager, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {50, 150}, 0.1);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
     SetTargetFPS(60);
@@ -53,9 +53,18 @@ int main()
 
         DrawEntities(&entityManager);
 
+        Vector2 mousePos = GetMousePosition();
+        Vector2 mousePosWorld = GetScreenToWorld2D(mousePos, camera.camera);
+        Vector2 lookDir = Vector2Subtract(mousePosWorld, player->position);
+        lookDir = Vector2Normalize(lookDir);
+        lookDir = Vector2Scale(lookDir, 100);
+
+        Vector2 weaponPos = Vector2Add(player->position, lookDir);
+        DrawCircle(weaponPos.x, weaponPos.y, 15, GREEN);        
+
         DebugDrawChunksBorders(&level);
         EndMode2D();
-        
+
         DrawFPS(10, 10);
 
         EndDrawing();
