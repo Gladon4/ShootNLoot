@@ -5,10 +5,24 @@
 #include "stdio.h"
 
 bool _PushEntity(Entity* pusher, Entity* pushee);
+void _DamageEntity(Entity* source, Entity* destination);
 
 void CollisionPrevention(Entity* entity1, Entity* entity2)
 {
-    if (!CheckCollisionRecs(entity1->hitbox.rect, entity2->hitbox.rect)) {
+    if (!CheckCollisionRecs(entity1->hitbox.rect, entity2->hitbox.rect)) 
+    {
+        return;
+    }
+
+    if (EntityHasTag(entity1, "bullet")) 
+    {
+        _DamageEntity(entity1, entity2);
+        return;
+    }
+
+    if (EntityHasTag(entity2, "bullet")) 
+    {
+        _DamageEntity(entity2, entity1);
         return;
     }
 
@@ -182,4 +196,22 @@ bool _PushEntity(Entity* pusher, Entity* pushee)
 
         return true;
     } 
+}
+
+void _DamageEntity(Entity* source, Entity* destination) {
+    int beforeHitHP = destination->currentHP;
+    int afterHitHP = destination->currentHP - source->currentHP;
+
+    destination->currentHP = afterHitHP;
+    
+    if (afterHitHP <= 0) 
+    {
+        source->currentHP -= beforeHitHP;
+    }
+    else
+    {
+        source->currentHP = 0;
+    }
+
+    return;
 }

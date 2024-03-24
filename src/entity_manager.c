@@ -4,7 +4,6 @@
 #include "chunk.h"
 #include "collision_system.h"
 
-
 void _CollisionPrevention (Level* level, int chunkIndex);
 void _UpdateEntityChunks (EntityManager* entityManager);
 
@@ -18,7 +17,7 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
     };
 }
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag)
+Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
 {
     char* hitboxTagPointer = (char*)malloc(100);
     char* entityTagsPointer = (char*)malloc(100);
@@ -26,13 +25,28 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position
     strncpy(hitboxTagPointer, hitboxTag, 100);
     strncpy(entityTagsPointer, entityTags, 100);
 
-    Entity* entity = CreateEntity(position, hitboxTagPointer, entityTagsPointer, mass, size, drag, entityManager->currentUUID);
+    Entity* entity = CreateEntity(position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
     entityManager->currentUUID++;
 
     return entity;
+}
+
+Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, char* entityTags, Vector2 size, float drag, int hp) {
+    char* entityTagsPointer = (char*)malloc(100);
+    strncpy(entityTagsPointer, entityTags, 100);
+
+    
+    Entity* bullet = CreateEntity(position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
+    bullet->velocity = velocity;
+
+    entityManager->entities[entityManager->numberOfEntities] = bullet;
+    entityManager->numberOfEntities++;
+    entityManager->currentUUID++;
+
+    return bullet;
 }
 
 void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity) 
@@ -72,11 +86,21 @@ void UpdateEntities(EntityManager* entityManager, float deltaTime)
             _CollisionPrevention(entityManager->level, i);
         }    
     }
+
+    for (int i=0; i<entityManager->numberOfEntities; i++)
+    {
+        if (entityManager->entities[i]->currentHP <= 0)
+        {
+            Entity* entityToRemove = entityManager->entities[i];
+            RemoveEntityFromEntityManager(entityManager, entityToRemove);
+            free(entityToRemove);
+        }
+    }
 }
 
 void _CollisionPrevention (Level* level, int chunkIndex)
 {
-    const int indexOffests[] = {-level->numberOfChunks.x-1, -level->numberOfChunks.x, -level->numberOfChunks.x+1,
+    const int chunkIndexOffests[] = {-level->numberOfChunks.x-1, -level->numberOfChunks.x, -level->numberOfChunks.x+1,
                                                         -1,                        0,                         +1,
                                 +level->numberOfChunks.x-1, +level->numberOfChunks.x, +level->numberOfChunks.x+1,};
 
@@ -86,10 +110,10 @@ void _CollisionPrevention (Level* level, int chunkIndex)
     {
         for (int o=0; o<9; o++)
         {
-            const bool offestedChunkDoesNotExists = (indexOffests[o] < 0 || (chunkIndex + indexOffests[o]) >= level->numberOfChunks.x * level->numberOfChunks.y);
+            const bool offestedChunkDoesNotExists = (chunkIndexOffests[o] < 0 || (chunkIndex + chunkIndexOffests[o]) >= level->numberOfChunks.x * level->numberOfChunks.y);
             if (offestedChunkDoesNotExists) {continue;}
 
-            Chunk chunk2 = level->chunks[chunkIndex + indexOffests[o]];
+            Chunk chunk2 = level->chunks[chunkIndex + chunkIndexOffests[o]];
 
             for (int j=0; j<chunk2.numberOfEntities; j++)
             {
@@ -115,7 +139,7 @@ void _UpdateEntityChunks (EntityManager* entityManager)
             int index = entityManager->level->numberOfChunks.x * j + i;
 
             free(entityManager->level->chunks[index].entitiesInChunk); 
-            entityManager->level->chunks[index].entitiesInChunk = calloc(100, sizeof(Entity*));
+            entityManager->level->chunks[index].entitiesInChunk = calloc(1000, sizeof(Entity*));
 
             entityManager->level->chunks[index].numberOfEntities = 0;
         }

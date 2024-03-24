@@ -4,7 +4,7 @@
 #include "string.h"
 #include "raymath.h"
 
-Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int uuid) {
+Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
     Entity* entity = malloc(sizeof(Entity));
 
     *entity = (Entity)
@@ -13,6 +13,9 @@ Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float 
         .mass = mass,
         .size = size, 
         .drag = drag,
+
+        .currentHP = hp,
+        .maxHP = hp,
 
         .velocity = (Vector2){0, 0},
         .acceleration = (Vector2) {0, 0},
@@ -47,6 +50,11 @@ void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime)
     entity->position = Vector2Add(entity->position, Vector2Scale(entity->velocity, deltaTime * 60));
 
     entity->position = Vector2Clamp(entity->position, Vector2Zero(), Vector2Subtract(levelSize, entity->size));
+
+    if (entity->currentToolCooldown > 0)
+    {
+        entity->currentToolCooldown -= deltaTime;
+    }
 
     UpdateEntityHitBox(entity);
 }

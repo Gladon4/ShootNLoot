@@ -1,6 +1,5 @@
 #include "smooth_cam.h"
 
-#include "smooth_cam.h"
 #include "raymath.h"
 
 SmoothCam CreateSmoothCamera(Vector2 startPosition, Vector2 size, Entity* target, float speed)
