@@ -5,6 +5,7 @@
 #include "hitbox.h"
 #include "tool.h"
 
+#define ENTITY_TAG_LENGTH 100
 
 typedef enum STATE
 {

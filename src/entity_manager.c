@@ -3,14 +3,22 @@
 #include "string.h"
 #include "chunk.h"
 #include "collision_system.h"
+#include "stdio.h"
 
 void _CollisionPrevention (Level* level, int chunkIndex);
 void _UpdateEntityChunks (EntityManager* entityManager);
 
 EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
 {
+    Entity** entities = calloc(maxNumberOfEntities, sizeof(Entity*));
+    if (entities == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
+
     return (EntityManager) {
-        .entities = calloc(maxNumberOfEntities, sizeof(Entity*)),
+        .entities = entities,
         .numberOfEntities = 0,
         .currentUUID = 0,
         .level = level
@@ -19,11 +27,21 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
 
 Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
 {
-    char* hitboxTagPointer = (char*)malloc(100);
-    char* entityTagsPointer = (char*)malloc(100);
+    char* hitboxTagPointer = (char*)malloc(ENTITY_TAG_LENGTH);
+    if (hitboxTagPointer == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
+    char* entityTagsPointer = (char*)malloc(ENTITY_TAG_LENGTH);
+    if (entityTagsPointer == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
 
-    strncpy(hitboxTagPointer, hitboxTag, 100);
-    strncpy(entityTagsPointer, entityTags, 100);
+    strncpy(hitboxTagPointer, hitboxTag, ENTITY_TAG_LENGTH);
+    strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
     Entity* entity = CreateEntity(position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
     
@@ -35,8 +53,13 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position
 }
 
 Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, char* entityTags, Vector2 size, float drag, int hp) {
-    char* entityTagsPointer = (char*)malloc(100);
-    strncpy(entityTagsPointer, entityTags, 100);
+    char* entityTagsPointer = (char*)malloc(ENTITY_TAG_LENGTH);
+    if (entityTagsPointer == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
+    strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
     
     Entity* bullet = CreateEntity(position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
@@ -139,8 +162,14 @@ void _UpdateEntityChunks (EntityManager* entityManager)
             int index = entityManager->level->numberOfChunks.x * j + i;
 
             free(entityManager->level->chunks[index].entitiesInChunk); 
-            entityManager->level->chunks[index].entitiesInChunk = calloc(1000, sizeof(Entity*));
+            Entity** entities = calloc(1000, sizeof(Entity*)); 
+            if (entities == NULL) 
+            {
+                printf("memory allocation failed");
+                exit(1);
+            }
 
+            entityManager->level->chunks[index].entitiesInChunk = entities;
             entityManager->level->chunks[index].numberOfEntities = 0;
         }
     }

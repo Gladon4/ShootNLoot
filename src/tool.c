@@ -8,7 +8,17 @@
 
 Tool* CreatePistol(char* name, int ammo, float cooldownTimeSeconds) {
     Tool* pistol = malloc(sizeof(Tool));
+    if (pistol == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
     char* _name = malloc(sizeof(name));
+    if (_name == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
 
     strcpy(_name, name);
 
@@ -31,12 +41,12 @@ void ShootPistol(Tool* self, EntityManager* entityManager, Entity* user) {
         return;
     }
 
-    printf("Name: %s \n Dur: %d/%d \n CD: %f \n\n", self->name, self->durability, self->maxDurability, self->cooldownTimeSeconds);
+    // printf("Name: %s \n Dur: %d/%d \n CD: %f \n\n", self->name, self->durability, self->maxDurability, self->cooldownTimeSeconds);
 
     Vector2 velocity = Vector2Scale(user->currentToolPosition, 0.1);
     Vector2 spawnPosition = Vector2Add(user->currentToolPosition, user->position);
 
-    CreateBullet(entityManager, spawnPosition, velocity, "bullet_pistolBullet", (Vector2){10,10}, 0, 10);
+    CreateBullet(entityManager, spawnPosition, velocity, "damaging_bullet_pistolBullet", (Vector2){10,10}, 0, 10);
 
     user->currentToolCooldown += self->cooldownTimeSeconds;
 

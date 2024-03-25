@@ -14,13 +14,13 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
         return;
     }
 
-    if (EntityHasTag(entity1, "bullet")) 
+    if (EntityHasTag(entity1, "damaging")) 
     {
         _DamageEntity(entity1, entity2);
         return;
     }
 
-    if (EntityHasTag(entity2, "bullet")) 
+    if (EntityHasTag(entity2, "damaging")) 
     {
         _DamageEntity(entity2, entity1);
         return;

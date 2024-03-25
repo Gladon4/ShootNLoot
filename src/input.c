@@ -25,7 +25,7 @@ void CalculateToolPosition(Entity* player, SmoothCam* camera) {
     Vector2 mousePosWorld = GetScreenToWorld2D(mousePos, camera->camera);
     Vector2 lookDir = Vector2Subtract(mousePosWorld, player->position);
     lookDir = Vector2Normalize(lookDir);
-    Vector2 toolPos = Vector2Scale(lookDir, 100);
+    Vector2 toolPos = Vector2Scale(lookDir, 75);
 
     player->currentToolPosition = toolPos;
 }

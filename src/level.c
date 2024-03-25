@@ -14,6 +14,12 @@ Level CreateLevel(Vector2 levelSize, Vector2 chunkSize, int seed)
     numberOfChunks.y = levelSize.y / chunkSize.y;
     Chunk* chunks = (Chunk*)calloc(numberOfChunks.x * numberOfChunks.y, sizeof(Chunk));
 
+    if (chunks == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
+
     return (Level)
     {
         .chunkSize = chunkSize,

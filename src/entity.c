@@ -3,9 +3,15 @@
 #include "stdlib.h"
 #include "string.h"
 #include "raymath.h"
+#include <stdio.h>
 
 Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
     Entity* entity = malloc(sizeof(Entity));
+    if (entity == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
 
     *entity = (Entity)
     {
@@ -79,8 +85,13 @@ void DrawEntity(Entity entity)
 
 bool EntityHasTag(Entity* entity, char* tag)
 {
-    char* entityTags = malloc(sizeof(entity->tags));
-    strcpy(entityTags, entity->tags);
+    char* entityTags = malloc(ENTITY_TAG_LENGTH);
+    if (entityTags == NULL) 
+    {
+        printf("memory allocation failed");
+        exit(1);
+    }
+    strncpy(entityTags, entity->tags, ENTITY_TAG_LENGTH);
 
     char* token = strtok(entity->tags, "_");
 
@@ -88,13 +99,13 @@ bool EntityHasTag(Entity* entity, char* tag)
     {
         if (!strcmp(token, tag))
         {
-            strcpy(entity->tags, entityTags);
+            strncpy(entity->tags, entityTags, ENTITY_TAG_LENGTH);
             return true;
         }
         token = strtok(NULL, "_");
     }
 
-    strcpy(entity->tags, entityTags);
+    strncpy(entity->tags, entityTags, ENTITY_TAG_LENGTH);
     return false;
 }
 
