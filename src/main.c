@@ -26,17 +26,17 @@ int main()
 
     InitWindow(screeSize.x, screeSize.y, windowTitle);
 
-    Level level = CreateLevel((Vector2) {2000, 2000}, (Vector2) {500,500}, 123);
+    Level level = CreateLevel((Vector2) {2000, 2000}, (Vector2) {250,250}, "resources/testLevel.png", 123);
 
     EntityManager entityManager = CreateEntityManager(&level, 1000);
 
     Entity* player = CreatePlayer(&entityManager, (Vector2) {1000, 1000});
-    
+
     Tool* pistol = CreatePistol("Cool Pistol", 100, 0.2);
     player->currentTool = pistol;
 
-    EntityManagerCreateEntity(&entityManager, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
-    EntityManagerCreateEntity(&entityManager, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {50, 150}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, "", (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, "resources/tree.png", (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {174/2, 316/2}, 0.1, 100);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
     SetTargetFPS(60);
@@ -59,7 +59,7 @@ int main()
 
         DrawEntities(&entityManager);
 
-        DrawCircle(player->position.x + player->currentToolPosition.x, player->position.y + player->currentToolPosition.y, 15, GREEN);        
+        DrawCircle(player->position.x + player->size.x/2 + player->currentToolPosition.x, player->position.y + player->size.y/2 + player->currentToolPosition.y, 15, GREEN);        
 
         DebugDrawChunksBorders(&level);
         EndMode2D();

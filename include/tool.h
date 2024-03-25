@@ -29,7 +29,7 @@ typedef struct Tool
 
     TOOLTYPE type;
 
-    void (*toolAction)(struct Tool *self, struct EntityManager* entityManager, struct Entity* user);
+    void (*toolAction)(struct Tool* self, struct EntityManager* entityManager, struct Entity* user);
 } Tool;
 
 

@@ -5,12 +5,17 @@
 #include "raymath.h"
 #include <stdio.h>
 
-Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
+Entity* CreateEntity(char* spritePath, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
     Entity* entity = malloc(sizeof(Entity));
     if (entity == NULL) 
     {
         printf("memory allocation failed");
         exit(1);
+    }
+
+    if (!strcmp(spritePath, ""))
+    {
+        spritePath = "resources/noSprite.png";
     }
 
     *entity = (Entity)
@@ -30,8 +35,8 @@ Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float 
         {
             .rect = (Rectangle)
             {
-                .x = position.x - size.x / 2,
-                .y = position.y - size.y / 2,
+                .x = position.x,
+                .y = position.y,
                 .width = size.x,
                 .height = size.y
             },
@@ -40,7 +45,9 @@ Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float 
 
         .uuid = uuid,
         .tags = entityTags,
-        .state = idle
+        .state = idle,
+
+        .sprite = LoadTexture(spritePath)
     };
     
     return entity;
@@ -68,19 +75,37 @@ void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime)
 void UpdateEntityHitBox(Entity* entity)
 {
     entity->hitbox.rect = (Rectangle) {
-        .x = entity->position.x - entity->size.x/2,
-        .y = entity->position.y - entity->size.y/2,
+        .x = entity->position.x,
+        .y = entity->position.y,
         .width = entity->size.x,
         .height = entity->size.y
     };
 }
 
-void DrawEntity(Entity entity)
+void DrawEntity(Entity* entity)
 {
-    Color col = RED;
-    if(entity.state == pushing) {col = GREEN;}
+    // Color col = RED;
+    // if(entity.state == pushing) {col = GREEN;}
 
-    DrawRectangle(entity.position.x - (entity.size.x / 2), entity.position.y - (entity.size.y / 2), entity.size.x, entity.size.y, col);
+    // DrawRectangle(entity.position.x - (entity.size.x / 2), entity.position.y - (entity.size.y / 2), entity.size.x, entity.size.y, col);
+
+    Rectangle spriteAtlasRectangle = (Rectangle)
+    {
+        .x = 0,
+        .y = 0, 
+        .width = entity->sprite.width,
+        .height = entity->sprite.height
+    };
+
+    Rectangle worldPositionRecatnge = (Rectangle)
+    {
+        .x = entity->position.x,
+        .y = entity->position.y, 
+        .width = entity->size.x, 
+        .height = entity->size.y
+    };
+
+    DrawTexturePro(entity->sprite, spriteAtlasRectangle, worldPositionRecatnge, Vector2Zero(), 0, WHITE);
 }
 
 bool EntityHasTag(Entity* entity, char* tag)

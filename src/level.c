@@ -7,7 +7,7 @@
 #include "stdlib.h"
 
 
-Level CreateLevel(Vector2 levelSize, Vector2 chunkSize, int seed)
+Level CreateLevel(Vector2 levelSize, Vector2 chunkSize, char* baseTexturePath, int seed)
 {
     Vector2 numberOfChunks;
     numberOfChunks.x = levelSize.x / chunkSize.x;
@@ -27,7 +27,7 @@ Level CreateLevel(Vector2 levelSize, Vector2 chunkSize, int seed)
         .size = levelSize,
         .chunks = chunks,
         .numberOfChunks = numberOfChunks,
-        .baseTexture = LoadTexture("resources/testLevel.png")
+        .baseTexture = LoadTexture(baseTexturePath)
     };
 
 }

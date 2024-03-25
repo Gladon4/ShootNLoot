@@ -25,7 +25,7 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
     };
 }
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
+Entity* EntityManagerCreateEntity(EntityManager* entityManager, char* spritePath, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
 {
     char* hitboxTagPointer = (char*)malloc(ENTITY_TAG_LENGTH);
     if (hitboxTagPointer == NULL) 
@@ -43,7 +43,7 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position
     strncpy(hitboxTagPointer, hitboxTag, ENTITY_TAG_LENGTH);
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
-    Entity* entity = CreateEntity(position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
+    Entity* entity = CreateEntity(spritePath, position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
@@ -62,7 +62,7 @@ Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 vel
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
     
-    Entity* bullet = CreateEntity(position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
+    Entity* bullet = CreateEntity("", position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
     bullet->velocity = velocity;
 
     entityManager->entities[entityManager->numberOfEntities] = bullet;
@@ -194,6 +194,6 @@ void DrawEntities(EntityManager* entityManager)
 {
     for (int i=0; i<entityManager->numberOfEntities; i++)
     {
-        DrawEntity(*entityManager->entities[i]);
+        DrawEntity(entityManager->entities[i]);
     }
 }

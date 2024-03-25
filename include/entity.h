@@ -35,14 +35,17 @@ typedef struct Entity
     Tool* currentTool;
     Vector2 currentToolPosition;
     float currentToolCooldown;
+
+    Texture2D sprite;
+    // void (*damageEntity)(struct Entity* self, struct EntityManager* entityManager);
 } Entity;
 
-Entity* CreateEntity(Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid);
+Entity* CreateEntity(char* spritePath, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid);
 
 void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime);
 void UpdateEntityHitBox(Entity* entity);
 
-void DrawEntity(Entity entity);
+void DrawEntity(Entity* entity);
 
 bool EntityHasTag(Entity* entity, char* tag);
 
