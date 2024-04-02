@@ -4,16 +4,17 @@
 #include "raylib.h"
 #include "stdlib.h"
 
-typedef struct Sprites 
-{
-    Texture2D unknownTexture;
-    Texture2D treeTexture;
+#define NUMBER_OF_SPRITES 3
 
-    Texture2D unknownLevelTexture;
-} Sprites;
 
-Sprites* createSpriteStruct();
+#define NO_SPRITE 0
 
-// #define SpriteManager createSpriteStruct()
+#define TREE_SPITE 1
+
+#define TEST_LEVEL_SPRITE 2
+
+Texture2D* loadSprites();
+
+
 
 #endif

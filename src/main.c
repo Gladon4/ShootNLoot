@@ -28,9 +28,9 @@ int main()
 
     InitWindow(screeSize.x, screeSize.y, windowTitle);
 
-    Sprites* sprites = createSpriteStruct();
+    Texture2D* sprites = loadSprites();
 
-    Level level = CreateLevel(sprites->unknownLevelTexture, (Vector2) {2000, 2000}, (Vector2) {250,250}, 123);
+    Level level = CreateLevel(sprites[TEST_LEVEL_SPRITE], (Vector2) {2000, 2000}, (Vector2) {250,250}, 123);
 
     EntityManager entityManager = CreateEntityManager(&level, 1000);
     entityManager.sprites = sprites;
@@ -40,8 +40,8 @@ int main()
     Tool* pistol = CreatePistol("Cool Pistol", 100, 0.2);
     player->currentTool = pistol;
 
-    EntityManagerCreateEntity(&entityManager, sprites->unknownTexture, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
-    EntityManagerCreateEntity(&entityManager, sprites->treeTexture, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {174/2, 316/2}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, NULL, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, TREE_SPITE, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {174/2, 316/2}, 0.1, 100);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
     SetTargetFPS(60);

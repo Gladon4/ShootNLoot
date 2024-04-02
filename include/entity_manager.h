@@ -12,12 +12,12 @@ typedef struct EntityManager
     int currentUUID;
 
     Level* level;
-    Sprites* sprites;
+    Texture2D* sprites;
 } EntityManager;
 
 EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities);
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager, Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp);
+Entity* EntityManagerCreateEntity(EntityManager* entityManager, int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp);
 Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, char* entityTags, Vector2 size, float drag, int hp);
 
 void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity);

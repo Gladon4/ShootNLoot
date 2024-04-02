@@ -25,7 +25,7 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
     };
 }
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager, Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
+Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
 {
     char* hitboxTagPointer = (char*)malloc(ENTITY_TAG_LENGTH);
     if (hitboxTagPointer == NULL) 
@@ -43,7 +43,10 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager, Texture2D sprite
     strncpy(hitboxTagPointer, hitboxTag, ENTITY_TAG_LENGTH);
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
-    Entity* entity = CreateEntity(sprite, position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
+
+    if (spriteID < 0 || spriteID == NULL) spriteID = NO_SPRITE;
+
+    Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
@@ -62,7 +65,7 @@ Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 vel
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
     
-    Entity* bullet = CreateEntity(entityManager->sprites->unknownTexture, position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
+    Entity* bullet = CreateEntity(entityManager->sprites[NO_SPRITE], position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
     bullet->velocity = velocity;
 
     entityManager->entities[entityManager->numberOfEntities] = bullet;
