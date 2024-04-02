@@ -5,8 +5,10 @@
 #include "collision_system.h"
 #include "stdio.h"
 
-void _CollisionPrevention (Level* level, int chunkIndex);
-void _UpdateEntityChunks (EntityManager* entityManager);
+void _CollisionPrevention(Level* level, int chunkIndex);
+void _UpdateEntityChunks(EntityManager* entityManager);
+void _SortEntities(EntityManager* entityManager);
+void _QuickSortEntities(Entity** entities, int left, int right);
 
 EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
 {
@@ -25,7 +27,7 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
     };
 }
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp)
+Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitboxRectangle, float drag, int hp)
 {
     char* hitboxTagPointer = (char*)malloc(ENTITY_TAG_LENGTH);
     if (hitboxTagPointer == NULL) 
@@ -46,7 +48,7 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, V
 
     if (spriteID < 0 || spriteID == NULL) spriteID = NO_SPRITE;
 
-    Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTagPointer, entityTagsPointer, mass, size, drag, hp, entityManager->currentUUID);
+    Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTagPointer, entityTagsPointer, mass, spriteSize, hitboxRectangle, drag, hp, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
@@ -64,8 +66,14 @@ Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 vel
     }
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
+    Rectangle rectangle = (Rectangle) {
+        .x = 0,
+        .y = 0,
+        .width = size.x,
+        .height = size.y
+    };
     
-    Entity* bullet = CreateEntity(entityManager->sprites[NO_SPRITE], position, "", entityTagsPointer, 1, size, drag, hp, entityManager->currentUUID);
+    Entity* bullet = CreateEntity(entityManager->sprites[NO_SPRITE], position, "", entityTagsPointer, 1, size, rectangle, drag, hp, entityManager->currentUUID);
     bullet->velocity = velocity;
 
     entityManager->entities[entityManager->numberOfEntities] = bullet;
@@ -103,7 +111,8 @@ void UpdateEntities(EntityManager* entityManager, float deltaTime)
     }
 
     _UpdateEntityChunks(entityManager);
-    
+    _SortEntities(entityManager);
+
     for (int j=0; j<5; j++)
     {
         const int totalNumberOfChunks = entityManager->level->numberOfChunks.x * entityManager->level->numberOfChunks.y;
@@ -146,10 +155,10 @@ void _CollisionPrevention (Level* level, int chunkIndex)
                 if (chunk.entitiesInChunk[i]->uuid == chunk2.entitiesInChunk[j]->uuid) {continue;}
                  
                 CollisionPrevention(chunk.entitiesInChunk[i], chunk2.entitiesInChunk[j]);
-                UpdateEntityHitBox(chunk2.entitiesInChunk[j]);
+                // UpdateEntityHitBox(chunk2.entitiesInChunk[j]);
             }
         }
-        UpdateEntityHitBox(chunk.entitiesInChunk[i]);
+        // UpdateEntityHitBox(chunk.entitiesInChunk[i]);
     }
 
     
@@ -190,6 +199,54 @@ void _UpdateEntityChunks (EntityManager* entityManager)
         entityManager->level->chunks[chunkIndex].entitiesInChunk[highestEnityIndexInChunk] = entityManager->entities[i];
         entityManager->level->chunks[chunkIndex].numberOfEntities++;
     }
+}
+
+
+void _QuickSortEntities(Entity** entities, int left, int right)
+{
+    Entity* tempPointer;
+    Entity* entityX;
+    int i,j;
+
+    
+    if (left < right)
+    {
+        entityX = entities[left];
+        i = left+1;
+        j = right;
+
+        while (i <= j)
+        {
+            while (i <= j && entities[i]->position.y + entities[i]->size.y <= entityX->position.y + entityX->size.y)
+            {
+                i++;
+            }
+            while (i <= j && entities[j]->position.y + entities[i]->size.y >= entityX->position.y + entityX->size.y)
+            {
+                j--;
+            }
+            if (i < j)
+            {
+                tempPointer = entities[i];
+                entities[i] = entities[j];
+                entities[j] = tempPointer;
+            }
+
+        }
+
+        i--;
+        entities[left] = entities[i];
+        entities[i] = entityX;
+
+        _QuickSortEntities(entities, left, i-1);
+        _QuickSortEntities(entities, i+1, right);
+    }
+}
+
+
+void _SortEntities(EntityManager* entityManager)
+{
+    _QuickSortEntities(entityManager->entities, 0, entityManager->numberOfEntities-1);
 }
 
 

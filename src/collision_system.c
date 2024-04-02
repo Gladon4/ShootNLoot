@@ -9,7 +9,16 @@ void _DamageEntity(Entity* source, Entity* destination);
 
 void CollisionPrevention(Entity* entity1, Entity* entity2)
 {
-    if (!CheckCollisionRecs(entity1->hitbox.rect, entity2->hitbox.rect)) 
+    Rectangle entity1HitboxRectangle = entity1->hitbox.rect;
+    Rectangle entity2HitboxRectangle = entity2->hitbox.rect;
+
+    entity1HitboxRectangle.x += entity1->position.x;
+    entity1HitboxRectangle.y += entity1->position.y;
+
+    entity2HitboxRectangle.x += entity2->position.x;
+    entity2HitboxRectangle.y += entity2->position.y;
+
+    if (!CheckCollisionRecs(entity1HitboxRectangle, entity2HitboxRectangle)) 
     {
         return;
     }
@@ -26,7 +35,7 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
         return;
     }
 
-
+    
     if (EntityHasTag(entity2, "pushable") && !EntityHasTag(entity1, "immovable"))
     {
         if (_PushEntity(entity1, entity2))
@@ -44,13 +53,13 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
             return;
         }
     }
-
     
-    Rectangle collisionRectangle = GetCollisionRec(entity1->hitbox.rect, entity2->hitbox.rect);
+    
+    Rectangle collisionRectangle = GetCollisionRec(entity1HitboxRectangle, entity2HitboxRectangle);
 
     if (collisionRectangle.width > collisionRectangle.height)
     {
-        bool entity1Above = entity2->hitbox.rect.y == collisionRectangle.y;
+        bool entity1Above = entity2HitboxRectangle.y == collisionRectangle.y;
 
         if (entity1Above) 
         {
@@ -100,7 +109,7 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
     }
     else
     {
-        bool entity1Left = entity2->hitbox.rect.x == collisionRectangle.x;
+        bool entity1Left = entity2HitboxRectangle.x == collisionRectangle.x;
 
         if (entity1Left) 
         {
@@ -154,7 +163,16 @@ void CollisionPrevention(Entity* entity1, Entity* entity2)
 
 bool _PushEntity(Entity* pusher, Entity* pushee)
 {
-    Rectangle collisionRectangle = GetCollisionRec(pusher->hitbox.rect, pushee->hitbox.rect);
+    Rectangle pusherHitboxRectangle = pusher->hitbox.rect;
+    Rectangle pusheeHitboxRectangle = pushee->hitbox.rect;
+
+    pusherHitboxRectangle.x += pusher->position.x;
+    pusherHitboxRectangle.y += pusher->position.y;
+
+    pusheeHitboxRectangle.x += pushee->position.x;
+    pusheeHitboxRectangle.y += pushee->position.y;
+
+    Rectangle collisionRectangle = GetCollisionRec(pusherHitboxRectangle, pusheeHitboxRectangle);
     float weightFactor = pusher->mass / pushee->mass;
     weightFactor = Clamp(weightFactor, 0, 1);
 
@@ -162,7 +180,7 @@ bool _PushEntity(Entity* pusher, Entity* pushee)
     {
         pusher->velocity.y = pusher->velocity.y * weightFactor;        
         
-        bool fromAbove = pushee->hitbox.rect.y == collisionRectangle.y;
+        bool fromAbove = pusheeHitboxRectangle.y == collisionRectangle.y;
 
         if (fromAbove) 
         {
@@ -181,7 +199,7 @@ bool _PushEntity(Entity* pusher, Entity* pushee)
     {
         pusher->velocity.x = pusher->velocity.x * weightFactor;        
         
-        bool fromLeft = pushee->hitbox.rect.x == collisionRectangle.x;
+        bool fromLeft = pusheeHitboxRectangle.x == collisionRectangle.x;
 
         if (fromLeft) 
         {

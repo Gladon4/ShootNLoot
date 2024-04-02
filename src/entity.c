@@ -5,7 +5,8 @@
 #include "raymath.h"
 #include <stdio.h>
 
-Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
+Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitbox, float drag, int hp, int uuid)
+{
     Entity* entity = malloc(sizeof(Entity));
     if (entity == NULL) 
     {
@@ -17,7 +18,7 @@ Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* 
     {
         .position = position,
         .mass = mass,
-        .size = size, 
+        .size = spriteSize, 
         .drag = drag,
 
         .currentHP = hp,
@@ -28,13 +29,7 @@ Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* 
 
         .hitbox = (Hitbox)
         {
-            .rect = (Rectangle)
-            {
-                .x = position.x,
-                .y = position.y,
-                .width = size.x,
-                .height = size.y
-            },
+            .rect = hitbox,
             .tag = hitboxTag
         },
 
@@ -64,7 +59,7 @@ void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime)
         entity->currentToolCooldown -= deltaTime;
     }
 
-    UpdateEntityHitBox(entity);
+    // UpdateEntityHitBox(entity);
 }
 
 void UpdateEntityHitBox(Entity* entity)

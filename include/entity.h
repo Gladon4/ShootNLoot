@@ -40,7 +40,7 @@ typedef struct Entity
     // void (*damageEntity)(struct Entity* self, struct EntityManager* entityManager);
 } Entity;
 
-Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid);
+Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitbox, float drag, int hp, int uuid);
 
 void UpdateEntity(Entity* entity, Vector2 levelSize, float deltaTime);
 void UpdateEntityHitBox(Entity* entity);
