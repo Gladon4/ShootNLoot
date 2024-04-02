@@ -23,7 +23,7 @@ void HandleInput(Entity* player, SmoothCam* camera, EntityManager* entityManager
 void CalculateToolPosition(Entity* player, SmoothCam* camera) {
     Vector2 mousePos = GetMousePosition();
     Vector2 mousePosWorld = GetScreenToWorld2D(mousePos, camera->camera);
-    Vector2 lookDir = Vector2Subtract(mousePosWorld, player->position);
+    Vector2 lookDir = Vector2Subtract(mousePosWorld, Vector2Add(player->position, Vector2Scale(player->size, 0.5)));
     lookDir = Vector2Normalize(lookDir);
     Vector2 toolPos = Vector2Scale(lookDir, 75);
 

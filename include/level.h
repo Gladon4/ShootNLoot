@@ -19,7 +19,7 @@ typedef struct Level
 } Level;
 
 
-Level CreateLevel(Vector2 levelSize, Vector2 chunkSize, char* baseTexturePath, int seed);
+Level CreateLevel(Texture2D levelBaseTexture, Vector2 levelSize, Vector2 chunkSize, int seed);
 
 void DrawLevel(Level* level);
 

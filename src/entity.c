@@ -5,17 +5,12 @@
 #include "raymath.h"
 #include <stdio.h>
 
-Entity* CreateEntity(char* spritePath, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
+Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 size, float drag, int hp, int uuid) {
     Entity* entity = malloc(sizeof(Entity));
     if (entity == NULL) 
     {
         printf("memory allocation failed");
         exit(1);
-    }
-
-    if (!strcmp(spritePath, ""))
-    {
-        spritePath = "resources/noSprite.png";
     }
 
     *entity = (Entity)
@@ -47,7 +42,7 @@ Entity* CreateEntity(char* spritePath, Vector2 position, char* hitboxTag, char* 
         .tags = entityTags,
         .state = idle,
 
-        .sprite = LoadTexture(spritePath)
+        .sprite = sprite
     };
     
     return entity;

@@ -12,6 +12,8 @@
 #include "input.h"
 #include "tool.h"
 
+#include "sprite_manager.h"
+
 #define VERSION "0.0.0.1 pre-alpha"
 
 int main()
@@ -26,17 +28,20 @@ int main()
 
     InitWindow(screeSize.x, screeSize.y, windowTitle);
 
-    Level level = CreateLevel((Vector2) {2000, 2000}, (Vector2) {250,250}, "resources/testLevel.png", 123);
+    Sprites* sprites = createSpriteStruct();
+
+    Level level = CreateLevel(sprites->unknownLevelTexture, (Vector2) {2000, 2000}, (Vector2) {250,250}, 123);
 
     EntityManager entityManager = CreateEntityManager(&level, 1000);
+    entityManager.sprites = sprites;
 
     Entity* player = CreatePlayer(&entityManager, (Vector2) {1000, 1000});
 
     Tool* pistol = CreatePistol("Cool Pistol", 100, 0.2);
     player->currentTool = pistol;
 
-    EntityManagerCreateEntity(&entityManager, "", (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
-    EntityManagerCreateEntity(&entityManager, "resources/tree.png", (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {174/2, 316/2}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, sprites->unknownTexture, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, 0.1, 100);
+    EntityManagerCreateEntity(&entityManager, sprites->treeTexture, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {174/2, 316/2}, 0.1, 100);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
     SetTargetFPS(60);
