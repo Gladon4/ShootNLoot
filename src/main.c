@@ -14,7 +14,7 @@
 
 #include "sprite_manager.h"
 
-#define VERSION "0.0.0.1 pre-alpha"
+#define VERSION "0.0.0.2 pre-alpha"
 
 int main()
 {
@@ -24,24 +24,27 @@ int main()
 
     char windowTitle[100];
     strcat(windowTitle, "Loot N Shoot ");
-    strcat(windowTitle, VERSION);
+    strcat(windowTitle, VERSION);    
 
     InitWindow(screeSize.x, screeSize.y, windowTitle);
 
     Texture2D* sprites = loadSprites();
 
-    Level level = CreateLevel(sprites[TEST_LEVEL_SPRITE], (Vector2) {2000, 2000}, (Vector2) {250,250}, 123);
+    int seed = 123940;
+    Level level = CreateLevel( sprites[TEST_LEVEL_SPRITE], (Vector2) {2000, 2000}, (Vector2) {200, 200}, seed);
 
     EntityManager entityManager = CreateEntityManager(&level, 1000);
     entityManager.sprites = sprites;
+
+    LevelGenerator(&level, &entityManager, seed);
 
     Entity* player = CreatePlayer(&entityManager, (Vector2) {1000, 1000});
 
     Tool* pistol = CreatePistol("Cool Pistol", 100, 0.2);
     player->currentTool = pistol;
 
-    EntityManagerCreateEntity(&entityManager, TREE_SPITE, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {100, 160}, (Rectangle) {25, 30, 50, 110}, 0.1, 100);
-    EntityManagerCreateEntity(&entityManager, NULL, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, (Rectangle) {0,0, 175, 175}, 0.1, 100);
+    // EntityManagerCreateEntity(&entityManager, TREE_SPITE, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {100, 160}, (Rectangle) {25, 30, 50, 110}, 0.1, 100);
+    // EntityManagerCreateEntity(&entityManager, NULL, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, (Rectangle) {0,0, 175, 175}, 0.1, 100);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
     SetTargetFPS(60);
@@ -66,7 +69,7 @@ int main()
 
         DrawCircle(player->position.x + player->size.x/2 + player->currentToolPosition.x, player->position.y + player->size.y/2 + player->currentToolPosition.y, 15, GREEN);        
 
-        DebugDrawChunksBorders(&level);
+        // DebugDrawChunksBorders(&level);
         EndMode2D();
 
         DrawFPS(10, 10);

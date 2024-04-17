@@ -4,6 +4,7 @@
 #include "chunk.h"
 #include "collision_system.h"
 #include "stdio.h"
+#include "raymath.h"
 
 void _CollisionPrevention(Level* level, int chunkIndex);
 void _UpdateEntityChunks(EntityManager* entityManager);
@@ -46,7 +47,7 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, V
     strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
 
 
-    if (spriteID < 0 || spriteID == NULL) spriteID = NO_SPRITE;
+    if (spriteID < 0 || !spriteID) spriteID = NO_SPRITE;
 
     Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTagPointer, entityTagsPointer, mass, spriteSize, hitboxRectangle, drag, hp, entityManager->currentUUID);
     
@@ -81,6 +82,11 @@ Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 vel
     entityManager->currentUUID++;
 
     return bullet;
+}
+
+Entity* CreateTree(EntityManager* entityManager, Vector2 position)
+{
+    return EntityManagerCreateEntity(entityManager, TREE_SPITE, position, "tree", "immovable_tree", 0.1, (Vector2) {100, 160}, (Rectangle) {30, 90, 30, 50}, 0, 100);
 }
 
 void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity) 
@@ -217,7 +223,7 @@ void _QuickSortEntities(Entity** entities, int left, int right)
 
         while (i <= j)
         {
-            while (i <= j && entities[i]->position.y + entities[i]->size.y <= entityX->position.y + entityX->size.y)
+            while (i <= j && entities[i]->position.y + entities[i]->size.y < entityX->position.y + entityX->size.y)
             {
                 i++;
             }
@@ -254,6 +260,13 @@ void DrawEntities(EntityManager* entityManager)
 {
     for (int i=0; i<entityManager->numberOfEntities; i++)
     {
+        // Draw Distance, but it seems raylib is already doing something on its own.
+        //
+        // if (Vector2Distance(player->position, entityManager->entities[i]->position) >= 200)
+        // {
+        //     continue;
+        // }
+
         DrawEntity(entityManager->entities[i]);
     }
 }

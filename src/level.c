@@ -6,6 +6,10 @@
 #include <sys/types.h>
 #include "stdlib.h"
 
+#include "entity.h"
+#include "sprite_manager.h"
+
+Entity* CreateTree(struct EntityManager* entityManager, Vector2 position);
 
 Level CreateLevel(Texture2D levelBaseTexture, Vector2 levelSize, Vector2 chunkSize, int seed)
 {
@@ -20,7 +24,7 @@ Level CreateLevel(Texture2D levelBaseTexture, Vector2 levelSize, Vector2 chunkSi
         exit(1);
     }
 
-    return (Level)
+    Level level = (Level)
     {
         .chunkSize = chunkSize,
         .brightness = 0.1,
@@ -30,11 +34,26 @@ Level CreateLevel(Texture2D levelBaseTexture, Vector2 levelSize, Vector2 chunkSi
         .baseTexture = levelBaseTexture
     };
 
+    return level;
 }
 
 void DrawLevel(Level* level)
 {
     DrawTexture(level->baseTexture, 0, 0, WHITE);
+}
+
+void LevelGenerator(Level* level, struct EntityManager* entityManager, int seed)
+{
+    srand(seed);
+
+    int numberOfTrees = NUMBER_OF_TREES + (rand() % NUMBER_OF_TREES);
+    
+    for (int i=0; i<numberOfTrees; i++)
+    {
+        int xPosition = rand() % (int)level->size.x;
+        int yPosition = rand() % (int)level->size.y;
+        CreateTree(entityManager, (Vector2){xPosition, yPosition});
+    }
 }
 
 void DebugDrawChunksBorders(Level* level)

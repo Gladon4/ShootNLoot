@@ -5,6 +5,10 @@
 #include "hitbox.h"
 #include "chunk.h"
 
+#define NUMBER_OF_TREES 100
+
+struct EntityManager;
+
 typedef struct Level
 {
     Vector2 size;
@@ -24,5 +28,7 @@ Level CreateLevel(Texture2D levelBaseTexture, Vector2 levelSize, Vector2 chunkSi
 void DrawLevel(Level* level);
 
 void DebugDrawChunksBorders(Level* level);
+
+void LevelGenerator(Level* level, struct EntityManager* entityManager, int seed);
 
 #endif
