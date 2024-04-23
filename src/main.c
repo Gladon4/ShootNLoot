@@ -44,10 +44,10 @@ int main()
     player->currentTool = pistol;
 
     // EntityManagerCreateEntity(&entityManager, TREE_SPITE, (Vector2) {1200, 1200}, "test", "immovable", 0.1, (Vector2) {100, 160}, (Rectangle) {25, 30, 50, 110}, 0.1, 100);
-    // EntityManagerCreateEntity(&entityManager, NULL, (Vector2) {1000, 1200}, "test", "test_pushable", 0.1, (Vector2) {175, 175}, (Rectangle) {0,0, 175, 175}, 0.1, 100);
+    // Entity* testEnt = EntityManagerCreateEntity(&entityManager, NULL, (Vector2) {1000, 1200}, TEST_H_TAG, PUSHABLE_E_TAG, 0.1, (Vector2) {175, 175}, (Rectangle) {0,0, 175, 175}, 0.1, 100);
 
     SmoothCam camera = CreateSmoothCamera(Vector2Zero(), screeSize, player, 5);
-    SetTargetFPS(60);
+    SetTargetFPS(0);
 
 
     while (!WindowShouldClose())

@@ -46,7 +46,7 @@ void ShootPistol(Tool* self, EntityManager* entityManager, Entity* user) {
     Vector2 velocity = Vector2Scale(user->currentToolPosition, 0.1);
     Vector2 spawnPosition = Vector2Add(user->currentToolPosition, user->position);
 
-    CreateBullet(entityManager, spawnPosition, velocity, "damaging_bullet_pistolBullet", (Vector2){10,10}, 0, 10);
+    CreateBullet(entityManager, spawnPosition, velocity, BULLET_E_TAG+DAMAGING_E_TAG, (Vector2){10,10}, 0, 10);
 
     user->currentToolCooldown += self->cooldownTimeSeconds;
 

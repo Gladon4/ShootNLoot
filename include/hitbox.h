@@ -3,10 +3,13 @@
 
 #include "raylib.h"
 
+#define TEST_H_TAG 1
+#define PLAYER_H_TAG 2
+
 typedef struct Hitbox
 {
     Rectangle rect;
-    char* tag;
+    int tags;
 } Hitbox;
 
 #endif

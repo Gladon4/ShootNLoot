@@ -28,28 +28,11 @@ EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities)
     };
 }
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitboxRectangle, float drag, int hp)
+Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, Vector2 position, int hitboxTags, int entityTags, float mass, Vector2 spriteSize, Rectangle hitboxRectangle, float drag, int hp)
 {
-    char* hitboxTagPointer = (char*)malloc(ENTITY_TAG_LENGTH);
-    if (hitboxTagPointer == NULL) 
-    {
-        printf("memory allocation failed");
-        exit(1);
-    }
-    char* entityTagsPointer = (char*)malloc(ENTITY_TAG_LENGTH);
-    if (entityTagsPointer == NULL) 
-    {
-        printf("memory allocation failed");
-        exit(1);
-    }
-
-    strncpy(hitboxTagPointer, hitboxTag, ENTITY_TAG_LENGTH);
-    strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
-
-
     if (spriteID < 0 || !spriteID) spriteID = NO_SPRITE;
 
-    Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTagPointer, entityTagsPointer, mass, spriteSize, hitboxRectangle, drag, hp, entityManager->currentUUID);
+    Entity* entity = CreateEntity(entityManager->sprites[spriteID], position, hitboxTags, entityTags, mass, spriteSize, hitboxRectangle, drag, hp, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
@@ -58,35 +41,23 @@ Entity* EntityManagerCreateEntity(EntityManager* entityManager,  int spriteID, V
     return entity;
 }
 
-Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, char* entityTags, Vector2 size, float drag, int hp) {
-    char* entityTagsPointer = (char*)malloc(ENTITY_TAG_LENGTH);
-    if (entityTagsPointer == NULL) 
-    {
-        printf("memory allocation failed");
-        exit(1);
-    }
-    strncpy(entityTagsPointer, entityTags, ENTITY_TAG_LENGTH);
-
+Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, int entityTags, Vector2 size, float drag, int hp) {
     Rectangle rectangle = (Rectangle) {
         .x = 0,
         .y = 0,
         .width = size.x,
         .height = size.y
     };
-    
-    Entity* bullet = CreateEntity(entityManager->sprites[NO_SPRITE], position, "", entityTagsPointer, 1, size, rectangle, drag, hp, entityManager->currentUUID);
-    bullet->velocity = velocity;
 
-    entityManager->entities[entityManager->numberOfEntities] = bullet;
-    entityManager->numberOfEntities++;
-    entityManager->currentUUID++;
+    Entity* bullet = EntityManagerCreateEntity(entityManager, NULL, position, 0, entityTags, 1, size, rectangle, drag, hp);
+    bullet->velocity = velocity;
 
     return bullet;
 }
 
 Entity* CreateTree(EntityManager* entityManager, Vector2 position)
 {
-    return EntityManagerCreateEntity(entityManager, TREE_SPITE, position, "tree", "immovable_tree", 0.1, (Vector2) {100, 160}, (Rectangle) {30, 90, 30, 50}, 0, 100);
+    return EntityManagerCreateEntity(entityManager, TREE_SPITE, position, TEST_H_TAG, IMMOVABLE_E_TAG+TREE_E_TAG, 0.1, (Vector2) {100, 160}, (Rectangle) {30, 90, 30, 50}, 0, 100);
 }
 
 void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity) 

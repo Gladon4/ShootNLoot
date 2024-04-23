@@ -17,8 +17,8 @@ typedef struct EntityManager
 
 EntityManager CreateEntityManager(Level* level, const int maxNumberOfEntities);
 
-Entity* EntityManagerCreateEntity(EntityManager* entityManager, int spriteID, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitboxRectangle, float drag, int hp);
-Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, char* entityTags, Vector2 size, float drag, int hp);
+Entity* EntityManagerCreateEntity(EntityManager* entityManager, int spriteID, Vector2 position, int hitboxTags, int entityTags, float mass, Vector2 spriteSize, Rectangle hitboxRectangle, float drag, int hp);
+Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 velocity, int entityTags, Vector2 size, float drag, int hp);
 Entity* CreateTree(EntityManager* entityManager, Vector2 position);
 
 void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity);

@@ -5,7 +5,7 @@
 #include "raymath.h"
 #include <stdio.h>
 
-Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* entityTags, float mass, Vector2 spriteSize, Rectangle hitbox, float drag, int hp, int uuid)
+Entity* CreateEntity(Texture2D sprite, Vector2 position, int hitboxTags, int entityTags, float mass, Vector2 spriteSize, Rectangle hitbox, float drag, int hp, int uuid)
 {
     Entity* entity = malloc(sizeof(Entity));
     if (entity == NULL) 
@@ -30,7 +30,7 @@ Entity* CreateEntity(Texture2D sprite, Vector2 position, char* hitboxTag, char* 
         .hitbox = (Hitbox)
         {
             .rect = hitbox,
-            .tag = hitboxTag
+            .tags = hitboxTags
         },
 
         .uuid = uuid,
@@ -98,29 +98,18 @@ void DrawEntity(Entity* entity)
     DrawTexturePro(entity->sprite, spriteAtlasRectangle, worldPositionRecatnge, Vector2Zero(), 0, WHITE);
 }
 
-bool EntityHasTag(Entity* entity, char* tag)
+int log2_i(int x);
+bool EntityHasTag(Entity* entity, int tag)
 {
-    char* entityTags = malloc(ENTITY_TAG_LENGTH);
-    if (entityTags == NULL) 
-    {
-        printf("memory allocation failed");
-        exit(1);
-    }
-    strncpy(entityTags, entity->tags, ENTITY_TAG_LENGTH);
+    int tags = entity->tags;
+    int hasTag = (tags >> log2_i(tag)) & 1;
 
-    char* token = strtok(entity->tags, "_");
-
-    while (token != NULL)
-    {
-        if (!strcmp(token, tag))
-        {
-            strncpy(entity->tags, entityTags, ENTITY_TAG_LENGTH);
-            return true;
-        }
-        token = strtok(NULL, "_");
-    }
-
-    strncpy(entity->tags, entityTags, ENTITY_TAG_LENGTH);
-    return false;
+    return (bool)hasTag;
 }
 
+int log2_i(int x)
+{
+    int result = 0;
+    while(x=x>>1) {result++;}
+    return result;
+}
