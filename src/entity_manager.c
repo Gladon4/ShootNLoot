@@ -49,7 +49,7 @@ Entity* CreateBullet(EntityManager* entityManager, Vector2 position, Vector2 vel
         .height = size.y
     };
 
-    Entity* bullet = EntityManagerCreateEntity(entityManager, NULL, position, 0, entityTags, 1, size, rectangle, drag, hp);
+    Entity* bullet = EntityManagerCreateEntity(entityManager, -1, position, 0, entityTags, 1, size, rectangle, drag, hp);
     bullet->velocity = velocity;
 
     return bullet;
