@@ -129,7 +129,11 @@ void _CollisionPrevention (Level* level, int chunkIndex)
 
             for (int j=0; j<chunk2.numberOfEntities; j++)
             {
-                if (chunk.entitiesInChunk[i]->uuid == chunk2.entitiesInChunk[j]->uuid) {continue;}
+                Entity* entity1 = chunk.entitiesInChunk[i];
+                Entity* entity2 = chunk2.entitiesInChunk[j];
+
+                if (entity1->uuid == entity2->uuid) {continue;}
+                if (EntityHasTag(entity1, IMMOVABLE_E_TAG) && EntityHasTag(entity2, IMMOVABLE_E_TAG)) {continue;}
                  
                 CollisionPrevention(chunk.entitiesInChunk[i], chunk2.entitiesInChunk[j]);
                 // UpdateEntityHitBox(chunk2.entitiesInChunk[j]);

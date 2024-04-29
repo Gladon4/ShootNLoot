@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include "string.h"
-#include "stdlib.h"
+#include <string.h>
+#include <stdlib.h>
+#include <sys/time.h>
 
 #include "raylib.h"
 #include "raymath.h"
@@ -52,13 +53,20 @@ int main()
 
     while (!WindowShouldClose())
     {
+        struct timeval frame_start, update_end, draw_end;
+        gettimeofday(&frame_start, NULL);
+
         float deltaTime = GetFrameTime();
 
+        // Updates
         HandleInput(player, &camera, &entityManager, deltaTime);
 
         UpdateEntities(&entityManager, deltaTime);
         UpdateCameraPosition(&camera, level, deltaTime);
 
+        gettimeofday(&update_end, NULL);
+
+        // Drawing
         BeginDrawing();
         BeginMode2D(camera.camera);
 
@@ -75,6 +83,12 @@ int main()
         DrawFPS(10, 10);
 
         EndDrawing();
+    
+        gettimeofday(&draw_end, NULL);
+        long update_time = (update_end.tv_sec - frame_start.tv_sec) * 1000000 + update_end.tv_usec - frame_start.tv_usec;
+        long draw_time = (draw_end.tv_sec - update_end.tv_sec) * 1000000 + draw_end.tv_usec - update_end.tv_usec; 
+    
+        // printf("Update Time: %lu us \t Draw Time: %lu us \n", update_time, draw_time);
     }
 
     CloseWindow();
