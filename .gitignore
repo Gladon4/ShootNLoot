@@ -1,4 +1,5 @@
-LootNShoot
+ShootNLoot
+_deps
 *.o
 CMakeCache.txt
 *.cmake
